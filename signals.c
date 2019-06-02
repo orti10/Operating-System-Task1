@@ -11,8 +11,7 @@
 int _index;
 int arr[5];
 
-void sigCather(int sig_num)
-{
+void sigCather(int sig_num) {
         signal(SIGTERM,sigCather);
         printf("PID %d is caught one\n",getpid());
         if(_index >-1) {
@@ -20,8 +19,15 @@ void sigCather(int sig_num)
         }
 }
 
-int main()
-{
+void killSingals(int state, int zombi) {
+        for (int i = 0; i < 5; i++) {
+                zombi = wait(&state);
+                printf("Process %d is dead\n",zombi);
+                kill(zombi,SIGKILL);
+        }
+}
+
+int main() {
         int pid;
         int zombi;
         int state;
@@ -45,13 +51,7 @@ int main()
         kill(arr[4],SIGTERM);
         sleep(1);
 
-        for (int i = 0; i < 5; i++)
-        {
-                zombi = wait(&state);
-                printf("Process %d is dead\n",zombi);
-                kill(zombi,SIGKILL);
-        }
-
+        killSingals(state, zombi);
 
         return 0;
 }
