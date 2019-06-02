@@ -15,7 +15,7 @@ using std::cout; using std::endl;
 #define WRITE_END 1
 
 
-int main(void)
+int main()
 {
 
   char write_msg[BUFFER_SIZE];
