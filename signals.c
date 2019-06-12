@@ -8,25 +8,10 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include "md5.h"
-int _index;
-int arr[5];
-
-void sigCather(int sig_num) {
-        signal(SIGTERM,sigCather);
-        printf("PID %d is caught one\n",getpid());
-        if(_index >-1) {
-                kill(arr[_index],SIGTERM);
-        }
-}
-
-void killSingals(int state, int zombi) {
-        for (int i = 0; i < 5; i++) {
-                zombi = wait(&state);
-                printf("Process %d is dead\n",zombi);
-                kill(zombi,SIGKILL);
-        }
-}
-
+int check;
+int array[5];
+void sigCather(int sig);
+void killAllsignals(int state, int zombi);
 int main() {
         int pid;
         int zombi;
@@ -38,20 +23,36 @@ int main() {
         {
                 pid = fork();
                 if(pid == 0) {
-                        //chlid Process
+                        
                         printf("PID %d is ready \n", getpid());
-                        _index = i-1;
-                        pause(); // wait for singal
-                        exit(0); // become a zombi
+                        check = i-1;
+                        pause(); 
+                        exit(0); 
                 }
-                // Parent Process
-                arr[i] = pid;
+               
+                array[i] = pid;
         }
         sleep(1);
-        kill(arr[4],SIGTERM);
+        kill(array[4],SIGTERM);
         sleep(1);
 
-        killSingals(state, zombi);
+        killAllsignals(state, zombi);
 
         return 0;
 }
+void sigCather(int sig) {
+        signal(SIGTERM,sigCather);
+        printf("PID %d caught one\n",getpid());
+        if(check >-1) {
+                kill(array[check],SIGTERM);
+        }
+}
+
+void killAllsignals(int state, int zombi) {
+        for (int i = 0; i < 5; i++) {
+                zombi = wait(&state);
+                printf("Process %d is dead\n",zombi);
+                kill(zombi,SIGKILL);
+        }
+}
+
